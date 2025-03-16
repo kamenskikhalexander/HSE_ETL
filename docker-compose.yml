@@ -6,8 +6,8 @@ services:
     restart: unless-stopped
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:password@postgresql:5432/postgres
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:password@postgresql:5432/postgres
       AIRFLOW__WEBSERVER__SECRET_KEY: secret
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: true
@@ -35,8 +35,8 @@ services:
     restart: unless-stopped
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:password@postgresql:5432/postgres
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:password@postgresql:5432/postgres
       AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: true
       AIRFLOW__WEBSERVER__SECRET_KEY: secret
     ports:
@@ -60,18 +60,19 @@ services:
           memory: 512M
 
   postgresql:
+    build: .
     image: postgres:latest
-    container_name: postgres
+    container_name: postgresql
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
     volumes:
       -  postgresql_data:/data/db
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "airflow"]
+      test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
